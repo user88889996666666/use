@@ -18,6 +18,7 @@ constexpr double kComfortIdealTemperature = 24.0;
 constexpr double kComfortIdealHumidity = 55.0;
 constexpr double kTemperaturePenaltyFactor = 3.0;
 constexpr double kHumidityPenaltyFactor = 1.5;
+constexpr double kThresholdCompareEpsilon = 0.0001;
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -154,11 +155,14 @@ void MainWindow::applyThresholdsFromUi()
 
     m_alarmSystem->setThresholds(thresholds);
     const AlarmThresholds adjustedThresholds = m_alarmSystem->thresholds();
-    if (adjustedThresholds.highTemperature != thresholds.highTemperature ||
-        adjustedThresholds.highHumidity != thresholds.highHumidity ||
-        adjustedThresholds.lowPressure != thresholds.lowPressure ||
-        adjustedThresholds.highPressure != thresholds.highPressure ||
-        adjustedThresholds.highGas != thresholds.highGas) {
+    const auto differs = [](double lhs, double rhs) {
+        return qAbs(lhs - rhs) > kThresholdCompareEpsilon;
+    };
+    if (differs(adjustedThresholds.highTemperature, thresholds.highTemperature) ||
+        differs(adjustedThresholds.highHumidity, thresholds.highHumidity) ||
+        differs(adjustedThresholds.lowPressure, thresholds.lowPressure) ||
+        differs(adjustedThresholds.highPressure, thresholds.highPressure) ||
+        differs(adjustedThresholds.highGas, thresholds.highGas)) {
         loadThresholdsToUi();
     }
 }
