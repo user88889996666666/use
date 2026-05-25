@@ -80,8 +80,13 @@ double HardwareInterface::readPressure() const
 
 double HardwareInterface::readAltitude() const
 {
-    // GY-39 传感器不提供海拔高度，使用气压计算
-    // 简化计算：仅使用模拟数据
+    if (m_gy39Sensor->isConnected()) {
+        GY39Data data = m_gy39Sensor->getCurrentData();
+        if (data.isValid) {
+            return data.altitude;
+        }
+    }
+    // 若GY-39不可用，返回模拟数据
     return nextValue(10.0, 260.0);
 }
 

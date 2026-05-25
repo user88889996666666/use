@@ -86,7 +86,7 @@ void GY39Sensor::configureOutput(bool autoOutput, bool enableBME, bool enableLig
     }
 
     // 命令格式: 0xA5 + 指令 + 校验和
-    // 示例: 0xA5 0x81+0x26 表示配置输出
+    // 示例: 0xA5 0x87 0x2C (0x87表示启用AUTO/BME/MAX，校验和=(0xA5+0x87)&0xFF=0x2C)
     quint8 command = 0x80 | config;
     sendCommand(command);
 }
@@ -266,8 +266,10 @@ bool GY39Sensor::parseMultiSensorFrame(const QByteArray &frame)
 
     // 解析温度（Byte4-5）
     // T = (Byte4<<8) | Byte5, 实际值 = T / 100
-    qint16 tempRaw = (static_cast<unsigned char>(frame[4]) << 8) |
-                     static_cast<unsigned char>(frame[5]);
+    // 使用unsigned中间值以正确处理两补数表示
+    quint16 tempRawUnsigned = (static_cast<unsigned char>(frame[4]) << 8) |
+                              static_cast<unsigned char>(frame[5]);
+    qint16 tempRaw = static_cast<qint16>(tempRawUnsigned);
     m_currentData.temperature = static_cast<double>(tempRaw) / 100.0;
 
     // 解析气压（Byte6-9）
@@ -285,9 +287,11 @@ bool GY39Sensor::parseMultiSensorFrame(const QByteArray &frame)
     m_currentData.humidity = static_cast<double>(humRaw) / 100.0;
 
     // 解析海拔（Byte12-13）
-    // H = (Byte12<<8) | Byte13
-    qint16 altitudeRaw = (static_cast<unsigned char>(frame[12]) << 8) |
-                         static_cast<unsigned char>(frame[13]);
+    // H = (Byte12<<8) | Byte13，单位为米，无需缩放
+    // 使用unsigned中间值以正确处理两补数表示（支持海平面下高度）
+    quint16 altitudeRawUnsigned = (static_cast<unsigned char>(frame[12]) << 8) |
+                                  static_cast<unsigned char>(frame[13]);
+    qint16 altitudeRaw = static_cast<qint16>(altitudeRawUnsigned);
     m_currentData.altitude = static_cast<double>(altitudeRaw);
 
     m_currentData.isValid = true;
