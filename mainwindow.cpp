@@ -8,6 +8,15 @@
 #include <QDateTime>
 #include <QtGlobal>
 
+namespace {
+constexpr int kMaxBrightness = 100;
+constexpr double kAutoBrightnessLightScale = 10.0;
+constexpr double kComfortIdealTemperature = 24.0;
+constexpr double kComfortIdealHumidity = 55.0;
+constexpr double kTemperaturePenaltyFactor = 3.0;
+constexpr double kHumidityPenaltyFactor = 1.5;
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -24,11 +33,11 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::onManualBrightnessChanged);
     connect(ui->autoModeCheckBox, &QCheckBox::toggled,
             this, &MainWindow::onAutoModeChanged);
-    connect(m_alarmSystem, &AlarmSystem::alarmTriggered, ui->alarmMessageLabel, [this](const QString &message) {
+    connect(m_alarmSystem, &AlarmSystem::alarmTriggered, this, [this](const QString &message) {
         ui->alarmMessageLabel->setText(message);
         ui->alarmStateLabel->setText(QStringLiteral("报警中"));
     });
-    connect(m_alarmSystem, &AlarmSystem::alarmCleared, ui->alarmMessageLabel, [this]() {
+    connect(m_alarmSystem, &AlarmSystem::alarmCleared, this, [this]() {
         ui->alarmMessageLabel->setText(QStringLiteral("无"));
         ui->alarmStateLabel->setText(QStringLiteral("正常"));
     });
@@ -93,7 +102,8 @@ void MainWindow::updateLedControl(double lightIntensity)
         return;
     }
 
-    const int autoBrightness = qBound(0, 100 - static_cast<int>(lightIntensity / 10.0), 100);
+    const int calculatedBrightness = kMaxBrightness - static_cast<int>(lightIntensity / kAutoBrightnessLightScale);
+    const int autoBrightness = qBound(0, calculatedBrightness, kMaxBrightness);
     m_hardware->setLedBrightness(autoBrightness);
     ui->brightnessSlider->setValue(autoBrightness);
     ui->ledBrightnessValueLabel->setText(QString::number(autoBrightness));
@@ -101,7 +111,7 @@ void MainWindow::updateLedControl(double lightIntensity)
 
 double MainWindow::comfortIndex(const SensorData &data) const
 {
-    const double temperatureScore = 100.0 - qAbs(data.temperature - 24.0) * 3.0;
-    const double humidityScore = 100.0 - qAbs(data.humidity - 55.0) * 1.5;
-    return qMax(0.0, (temperatureScore + humidityScore) / 2.0);
+    const double temperatureScore = qMax(0.0, 100.0 - qAbs(data.temperature - kComfortIdealTemperature) * kTemperaturePenaltyFactor);
+    const double humidityScore = qMax(0.0, 100.0 - qAbs(data.humidity - kComfortIdealHumidity) * kHumidityPenaltyFactor);
+    return (temperatureScore + humidityScore) / 2.0;
 }

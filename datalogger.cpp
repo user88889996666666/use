@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QStandardPaths>
 #include <QTextStream>
 
@@ -54,10 +55,12 @@ bool DataLogger::ensureHeader()
         return true;
     }
 
-    const int slashPos = m_logFilePath.lastIndexOf('/');
-    if (slashPos > 0) {
-        const QString dirPath = m_logFilePath.left(slashPos);
-        QDir().mkpath(dirPath);
+    const QFileInfo fileInfo(m_logFilePath);
+    const QString absoluteDirPath = fileInfo.absolutePath();
+    if (!absoluteDirPath.isEmpty()) {
+        if (!QDir().mkpath(absoluteDirPath)) {
+            return false;
+        }
     }
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
