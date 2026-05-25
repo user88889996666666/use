@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStringList>
 
 #include "alarmsystem.h"
 
@@ -43,6 +44,8 @@ private:
     double comfortIndex(const SensorData &data) const;
     void applyThresholdsFromUi();
     void loadThresholdsToUi();
+    void initializeGy39();
+    void updateGy39Status(bool connected, const QString &portName = QString());
 };
 
 #endif // MAINWINDOW_H

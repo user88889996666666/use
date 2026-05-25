@@ -24,6 +24,8 @@ void SensorManager::stop()
 
 void SensorManager::collectData()
 {
+    m_hardware->refreshGY39Data();
+
     SensorData data;
     data.temperature = m_hardware->readTemperature();
     data.humidity = m_hardware->readHumidity();

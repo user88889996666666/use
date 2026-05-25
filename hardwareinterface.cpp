@@ -7,6 +7,7 @@
 HardwareInterface::HardwareInterface(QObject *parent)
     : QObject(parent)
     , m_gy39Sensor(new GY39Sensor(this))
+    // Mask to positive 31-bit range so the pseudo-random sequence starts from a stable non-negative seed.
     , m_seed(static_cast<quint32>(QDateTime::currentMSecsSinceEpoch() & 0x7fffffff))
     , m_ledBrightness(0)
     , m_buzzerEnabled(false)
@@ -32,6 +33,13 @@ bool HardwareInterface::initializeGY39(const QString &portName, int baudRate)
 bool HardwareInterface::isGY39Connected() const
 {
     return m_gy39Sensor->isConnected();
+}
+
+void HardwareInterface::refreshGY39Data() const
+{
+    if (m_gy39Sensor->isConnected()) {
+        m_gy39Sensor->requestAllData();
+    }
 }
 
 double HardwareInterface::readTemperature() const

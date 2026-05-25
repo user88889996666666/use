@@ -36,6 +36,9 @@ public:
     // enableBME: 输出温度/气压/湿度/海拔
     // enableLight: 输出光强
     void configureOutput(bool autoOutput = true, bool enableBME = true, bool enableLight = true);
+    void requestLightData();
+    void requestEnvironmentData();
+    void requestAllData();
 
 signals:
     void dataReceived(const GY39Data &data);

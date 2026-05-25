@@ -8,6 +8,7 @@
 #include <QDateTime>
 #include <QDoubleSpinBox>
 #include <QPushButton>
+#include <QStatusBar>
 #include <QtGlobal>
 
 namespace {
@@ -19,6 +20,12 @@ constexpr double kComfortIdealHumidity = 55.0;
 constexpr double kTemperaturePenaltyFactor = 3.0;
 constexpr double kHumidityPenaltyFactor = 1.5;
 constexpr double kThresholdCompareEpsilon = 0.0001;
+const QStringList kGY39CandidatePorts = {
+    QStringLiteral("/dev/ttyUSB0"),
+    QStringLiteral("/dev/ttySAC1"),
+    QStringLiteral("/dev/ttyS1"),
+    QStringLiteral("COM3")
+};
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -45,6 +52,12 @@ MainWindow::MainWindow(QWidget *parent)
         ui->alarmMessageLabel->setText(QStringLiteral("无"));
         ui->alarmStateLabel->setText(QStringLiteral("正常"));
     });
+    connect(m_hardware, &HardwareInterface::gy39Connected, this, [this]() {
+        updateGy39Status(true);
+    });
+    connect(m_hardware, &HardwareInterface::gy39Disconnected, this, [this]() {
+        updateGy39Status(false);
+    });
     connect(ui->tempThresholdSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &MainWindow::onAlarmThresholdChanged);
     connect(ui->humidityThresholdSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
@@ -58,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->resetThresholdsButton, &QPushButton::clicked,
             this, &MainWindow::onResetThresholdsClicked);
 
+    initializeGy39();
     loadThresholdsToUi();
     onAutoModeChanged(ui->autoModeCheckBox->isChecked());
     m_sensorManager->start(1000);
@@ -181,4 +195,31 @@ void MainWindow::loadThresholdsToUi()
     setSpinBoxValueSilently(ui->pressureLowThresholdSpinBox, thresholds.lowPressure);
     setSpinBoxValueSilently(ui->pressureHighThresholdSpinBox, thresholds.highPressure);
     setSpinBoxValueSilently(ui->gasThresholdSpinBox, thresholds.highGas);
+}
+
+void MainWindow::initializeGy39()
+{
+    for (const QString &portName : kGY39CandidatePorts) {
+        if (m_hardware->initializeGY39(portName, 9600)) {
+            updateGy39Status(true, portName);
+            statusBar()->showMessage(QStringLiteral("GY-39 已连接: %1 (UART 9600 8N1)").arg(portName), 5000);
+            return;
+        }
+    }
+
+    updateGy39Status(false);
+    statusBar()->showMessage(QStringLiteral("GY-39 未连接，当前使用模拟数据"), 5000);
+}
+
+void MainWindow::updateGy39Status(bool connected, const QString &portName)
+{
+    if (connected) {
+        if (portName.isEmpty()) {
+            ui->gy39StatusValueLabel->setText(QStringLiteral("已连接（UART）"));
+        } else {
+            ui->gy39StatusValueLabel->setText(QStringLiteral("已连接（%1）").arg(portName));
+        }
+    } else {
+        ui->gy39StatusValueLabel->setText(QStringLiteral("未连接"));
+    }
 }

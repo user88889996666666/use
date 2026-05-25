@@ -87,8 +87,33 @@ void GY39Sensor::configureOutput(bool autoOutput, bool enableBME, bool enableLig
 
     // 命令格式: 0xA5 + 指令 + 校验和
     // 示例: 0xA5 0x87 0x2C (0x87启用AUTO/BME/MAX，校验和=(0xA5+0x87)&0xFF=0x2C)
+    // 0x80是GY-39配置类指令基码，与0x51/0x52查询指令不同。
     quint8 command = 0x80 | config;
     sendCommand(command);
+}
+
+void GY39Sensor::requestLightData()
+{
+    if (!m_isConnected) {
+        return;
+    }
+    // 0xA5 0x51 0xF6
+    sendCommand(0x51);
+}
+
+void GY39Sensor::requestEnvironmentData()
+{
+    if (!m_isConnected) {
+        return;
+    }
+    // 0xA5 0x52 0xF7
+    sendCommand(0x52);
+}
+
+void GY39Sensor::requestAllData()
+{
+    requestLightData();
+    requestEnvironmentData();
 }
 
 void GY39Sensor::sendCommand(quint8 command)
@@ -266,7 +291,7 @@ bool GY39Sensor::parseMultiSensorFrame(const QByteArray &frame)
 
     // 解析温度（Byte4-5）
     // T = (Byte4<<8) | Byte5, actual value = T / 100
-    // Use unsigned intermediate to properly handle two's complement representation
+    // Use unsigned intermediate then cast to signed to correctly parse sub-zero temperatures.
     quint16 tempRawUnsigned = (static_cast<unsigned char>(frame[4]) << 8) |
                               static_cast<unsigned char>(frame[5]);
     qint16 tempRaw = static_cast<qint16>(tempRawUnsigned);
@@ -308,4 +333,3 @@ void GY39Sensor::onSerialError(QSerialPort::SerialPortError error)
         }
     }
 }
-

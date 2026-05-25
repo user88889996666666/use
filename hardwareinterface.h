@@ -15,6 +15,7 @@ public:
     // 初始化GY-39传感器
     bool initializeGY39(const QString &portName = "COM3", int baudRate = 9600);
     bool isGY39Connected() const;
+    void refreshGY39Data() const;
 
     // 读取环境传感器数据（优先从GY-39读取，否则使用模拟数据）
     double readTemperature() const;
