@@ -27,6 +27,8 @@ private slots:
     void onSensorDataUpdated(const SensorData &data);
     void onManualBrightnessChanged(int value);
     void onAutoModeChanged(bool checked);
+    void onAlarmThresholdChanged();
+    void onResetThresholdsClicked();
 
 private:
     Ui::MainWindow *ui;
@@ -39,6 +41,8 @@ private:
     void updateEnvironmentDisplay(const SensorData &data);
     void updateLedControl(double lightIntensity);
     double comfortIndex(const SensorData &data) const;
+    void applyThresholdsFromUi();
+    void loadThresholdsToUi();
 };
 
 #endif // MAINWINDOW_H

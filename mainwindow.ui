@@ -75,8 +75,20 @@
          <item row="5" column="1"><widget class="QLabel" name="alarmStateLabel"><property name="text"><string>正常</string></property></widget></item>
          <item row="6" column="0"><widget class="QLabel" name="alarmMessageTitleLabel"><property name="text"><string>报警信息</string></property></widget></item>
          <item row="6" column="1"><widget class="QLabel" name="alarmMessageLabel"><property name="text"><string>无</string></property></widget></item>
-         <item row="7" column="0"><widget class="QLabel" name="logPathLabel"><property name="text"><string>数据存储路径</string></property></widget></item>
-         <item row="7" column="1"><widget class="QLabel" name="logPathValueLabel"><property name="text"><string>--</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+         <item row="7" column="0"><widget class="QLabel" name="tempThresholdLabel"><property name="text"><string>温度报警阈值(°C)</string></property></widget></item>
+         <item row="7" column="1"><widget class="QDoubleSpinBox" name="tempThresholdSpinBox"><property name="minimum"><double>0.000000000000000</double></property><property name="maximum"><double>100.000000000000000</double></property><property name="singleStep"><double>0.500000000000000</double></property><property name="value"><double>35.000000000000000</double></property></widget></item>
+         <item row="8" column="0"><widget class="QLabel" name="humidityThresholdLabel"><property name="text"><string>湿度报警阈值(%)</string></property></widget></item>
+         <item row="8" column="1"><widget class="QDoubleSpinBox" name="humidityThresholdSpinBox"><property name="minimum"><double>0.000000000000000</double></property><property name="maximum"><double>100.000000000000000</double></property><property name="singleStep"><double>1.000000000000000</double></property><property name="value"><double>85.000000000000000</double></property></widget></item>
+         <item row="9" column="0"><widget class="QLabel" name="pressureLowThresholdLabel"><property name="text"><string>气压下限(hPa)</string></property></widget></item>
+         <item row="9" column="1"><widget class="QDoubleSpinBox" name="pressureLowThresholdSpinBox"><property name="minimum"><double>500.000000000000000</double></property><property name="maximum"><double>1200.000000000000000</double></property><property name="singleStep"><double>1.000000000000000</double></property><property name="value"><double>960.000000000000000</double></property></widget></item>
+         <item row="10" column="0"><widget class="QLabel" name="pressureHighThresholdLabel"><property name="text"><string>气压上限(hPa)</string></property></widget></item>
+         <item row="10" column="1"><widget class="QDoubleSpinBox" name="pressureHighThresholdSpinBox"><property name="minimum"><double>500.000000000000000</double></property><property name="maximum"><double>1200.000000000000000</double></property><property name="singleStep"><double>1.000000000000000</double></property><property name="value"><double>1040.000000000000000</double></property></widget></item>
+         <item row="11" column="0"><widget class="QLabel" name="gasThresholdLabel"><property name="text"><string>可燃气阈值(ppm)</string></property></widget></item>
+         <item row="11" column="1"><widget class="QDoubleSpinBox" name="gasThresholdSpinBox"><property name="minimum"><double>0.000000000000000</double></property><property name="maximum"><double>5000.000000000000000</double></property><property name="singleStep"><double>10.000000000000000</double></property><property name="value"><double>300.000000000000000</double></property></widget></item>
+         <item row="12" column="0"><widget class="QPushButton" name="resetThresholdsButton"><property name="text"><string>恢复默认阈值</string></property></widget></item>
+         <item row="12" column="1"><spacer name="horizontalSpacer_2"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+         <item row="13" column="0"><widget class="QLabel" name="logPathLabel"><property name="text"><string>数据存储路径</string></property></widget></item>
+         <item row="13" column="1"><widget class="QLabel" name="logPathValueLabel"><property name="text"><string>--</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
         </layout>
        </widget>
       </item>

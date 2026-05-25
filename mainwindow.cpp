@@ -6,6 +6,8 @@
 #include "sensormanager.h"
 
 #include <QDateTime>
+#include <QDoubleSpinBox>
+#include <QPushButton>
 #include <QtGlobal>
 
 namespace {
@@ -41,7 +43,20 @@ MainWindow::MainWindow(QWidget *parent)
         ui->alarmMessageLabel->setText(QStringLiteral("无"));
         ui->alarmStateLabel->setText(QStringLiteral("正常"));
     });
+    connect(ui->tempThresholdSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &MainWindow::onAlarmThresholdChanged);
+    connect(ui->humidityThresholdSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &MainWindow::onAlarmThresholdChanged);
+    connect(ui->pressureLowThresholdSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &MainWindow::onAlarmThresholdChanged);
+    connect(ui->pressureHighThresholdSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &MainWindow::onAlarmThresholdChanged);
+    connect(ui->gasThresholdSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &MainWindow::onAlarmThresholdChanged);
+    connect(ui->resetThresholdsButton, &QPushButton::clicked,
+            this, &MainWindow::onResetThresholdsClicked);
 
+    loadThresholdsToUi();
     onAutoModeChanged(ui->autoModeCheckBox->isChecked());
     m_sensorManager->start(1000);
 }
@@ -76,6 +91,17 @@ void MainWindow::onAutoModeChanged(bool checked)
     if (!checked) {
         onManualBrightnessChanged(ui->brightnessSlider->value());
     }
+}
+
+void MainWindow::onAlarmThresholdChanged()
+{
+    applyThresholdsFromUi();
+}
+
+void MainWindow::onResetThresholdsClicked()
+{
+    m_alarmSystem->setThresholds(AlarmThresholds{});
+    loadThresholdsToUi();
 }
 
 void MainWindow::updateEnvironmentDisplay(const SensorData &data)
@@ -114,4 +140,40 @@ double MainWindow::comfortIndex(const SensorData &data) const
     const double temperatureScore = qMax(0.0, 100.0 - qAbs(data.temperature - kComfortIdealTemperature) * kTemperaturePenaltyFactor);
     const double humidityScore = qMax(0.0, 100.0 - qAbs(data.humidity - kComfortIdealHumidity) * kHumidityPenaltyFactor);
     return (temperatureScore + humidityScore) / 2.0;
+}
+
+void MainWindow::applyThresholdsFromUi()
+{
+    AlarmThresholds thresholds;
+    thresholds.highTemperature = ui->tempThresholdSpinBox->value();
+    thresholds.highHumidity = ui->humidityThresholdSpinBox->value();
+    thresholds.lowPressure = ui->pressureLowThresholdSpinBox->value();
+    thresholds.highPressure = ui->pressureHighThresholdSpinBox->value();
+    thresholds.highGas = ui->gasThresholdSpinBox->value();
+
+    m_alarmSystem->setThresholds(thresholds);
+    loadThresholdsToUi();
+}
+
+void MainWindow::loadThresholdsToUi()
+{
+    const AlarmThresholds thresholds = m_alarmSystem->thresholds();
+
+    ui->tempThresholdSpinBox->blockSignals(true);
+    ui->humidityThresholdSpinBox->blockSignals(true);
+    ui->pressureLowThresholdSpinBox->blockSignals(true);
+    ui->pressureHighThresholdSpinBox->blockSignals(true);
+    ui->gasThresholdSpinBox->blockSignals(true);
+
+    ui->tempThresholdSpinBox->setValue(thresholds.highTemperature);
+    ui->humidityThresholdSpinBox->setValue(thresholds.highHumidity);
+    ui->pressureLowThresholdSpinBox->setValue(thresholds.lowPressure);
+    ui->pressureHighThresholdSpinBox->setValue(thresholds.highPressure);
+    ui->gasThresholdSpinBox->setValue(thresholds.highGas);
+
+    ui->tempThresholdSpinBox->blockSignals(false);
+    ui->humidityThresholdSpinBox->blockSignals(false);
+    ui->pressureLowThresholdSpinBox->blockSignals(false);
+    ui->pressureHighThresholdSpinBox->blockSignals(false);
+    ui->gasThresholdSpinBox->blockSignals(false);
 }

@@ -2,11 +2,7 @@
 #include "hardwareinterface.h"
 
 namespace {
-constexpr double kHighTemperatureThreshold = 35.0;
-constexpr double kHighHumidityThreshold = 85.0;
-constexpr double kLowPressureThreshold = 960.0;
-constexpr double kHighPressureThreshold = 1040.0;
-constexpr double kHighGasThreshold = 300.0;
+constexpr double kPressureGap = 1.0;
 }
 
 AlarmSystem::AlarmSystem(HardwareInterface *hardware, QObject *parent)
@@ -20,16 +16,16 @@ AlarmStatus AlarmSystem::evaluate(const SensorData &data)
 {
     AlarmStatus status;
 
-    if (data.temperature > kHighTemperatureThreshold) {
+    if (data.temperature > m_thresholds.highTemperature) {
         status.active = true;
         status.message = tr("温度过高报警");
-    } else if (data.humidity > kHighHumidityThreshold) {
+    } else if (data.humidity > m_thresholds.highHumidity) {
         status.active = true;
         status.message = tr("湿度过高报警");
-    } else if (data.pressure < kLowPressureThreshold || data.pressure > kHighPressureThreshold) {
+    } else if (data.pressure < m_thresholds.lowPressure || data.pressure > m_thresholds.highPressure) {
         status.active = true;
         status.message = tr("气压异常报警");
-    } else if (data.gasConcentration > kHighGasThreshold) {
+    } else if (data.gasConcentration > m_thresholds.highGas) {
         status.active = true;
         status.message = tr("可燃气浓度超限报警");
     }
@@ -44,4 +40,17 @@ AlarmStatus AlarmSystem::evaluate(const SensorData &data)
 
     m_alarmActive = status.active;
     return status;
+}
+
+void AlarmSystem::setThresholds(const AlarmThresholds &thresholds)
+{
+    m_thresholds = thresholds;
+    if (m_thresholds.highPressure <= m_thresholds.lowPressure) {
+        m_thresholds.highPressure = m_thresholds.lowPressure + kPressureGap;
+    }
+}
+
+AlarmThresholds AlarmSystem::thresholds() const
+{
+    return m_thresholds;
 }
