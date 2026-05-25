@@ -166,15 +166,15 @@ void MainWindow::applyThresholdsFromUi()
 void MainWindow::loadThresholdsToUi()
 {
     const AlarmThresholds thresholds = m_alarmSystem->thresholds();
-    const auto setSpinBoxValue = [](QDoubleSpinBox *spinBox, double value) {
+    const auto setSpinBoxValueSilently = [](QDoubleSpinBox *spinBox, double value) {
         spinBox->blockSignals(true);
         spinBox->setValue(value);
         spinBox->blockSignals(false);
     };
 
-    setSpinBoxValue(ui->tempThresholdSpinBox, thresholds.highTemperature);
-    setSpinBoxValue(ui->humidityThresholdSpinBox, thresholds.highHumidity);
-    setSpinBoxValue(ui->pressureLowThresholdSpinBox, thresholds.lowPressure);
-    setSpinBoxValue(ui->pressureHighThresholdSpinBox, thresholds.highPressure);
-    setSpinBoxValue(ui->gasThresholdSpinBox, thresholds.highGas);
+    setSpinBoxValueSilently(ui->tempThresholdSpinBox, thresholds.highTemperature);
+    setSpinBoxValueSilently(ui->humidityThresholdSpinBox, thresholds.highHumidity);
+    setSpinBoxValueSilently(ui->pressureLowThresholdSpinBox, thresholds.lowPressure);
+    setSpinBoxValueSilently(ui->pressureHighThresholdSpinBox, thresholds.highPressure);
+    setSpinBoxValueSilently(ui->gasThresholdSpinBox, thresholds.highGas);
 }

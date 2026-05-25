@@ -23,7 +23,7 @@ class SensorManager : public QObject
 public:
     explicit SensorManager(HardwareInterface *hardware, QObject *parent = nullptr);
 
-    // 启动/停止周期采样（含可燃气浓度定时更新）
+    // 启动/停止周期采样（每个周期同步更新所有传感器数据）
     void start(int intervalMs = 1000);
     void stop();
 
