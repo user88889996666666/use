@@ -153,28 +153,28 @@ void MainWindow::applyThresholdsFromUi()
     thresholds.highGas = ui->gasThresholdSpinBox->value();
 
     m_alarmSystem->setThresholds(thresholds);
-    loadThresholdsToUi();
+    const AlarmThresholds adjustedThresholds = m_alarmSystem->thresholds();
+    if (adjustedThresholds.highTemperature != thresholds.highTemperature ||
+        adjustedThresholds.highHumidity != thresholds.highHumidity ||
+        adjustedThresholds.lowPressure != thresholds.lowPressure ||
+        adjustedThresholds.highPressure != thresholds.highPressure ||
+        adjustedThresholds.highGas != thresholds.highGas) {
+        loadThresholdsToUi();
+    }
 }
 
 void MainWindow::loadThresholdsToUi()
 {
     const AlarmThresholds thresholds = m_alarmSystem->thresholds();
+    const auto setSpinBoxValue = [](QDoubleSpinBox *spinBox, double value) {
+        spinBox->blockSignals(true);
+        spinBox->setValue(value);
+        spinBox->blockSignals(false);
+    };
 
-    ui->tempThresholdSpinBox->blockSignals(true);
-    ui->humidityThresholdSpinBox->blockSignals(true);
-    ui->pressureLowThresholdSpinBox->blockSignals(true);
-    ui->pressureHighThresholdSpinBox->blockSignals(true);
-    ui->gasThresholdSpinBox->blockSignals(true);
-
-    ui->tempThresholdSpinBox->setValue(thresholds.highTemperature);
-    ui->humidityThresholdSpinBox->setValue(thresholds.highHumidity);
-    ui->pressureLowThresholdSpinBox->setValue(thresholds.lowPressure);
-    ui->pressureHighThresholdSpinBox->setValue(thresholds.highPressure);
-    ui->gasThresholdSpinBox->setValue(thresholds.highGas);
-
-    ui->tempThresholdSpinBox->blockSignals(false);
-    ui->humidityThresholdSpinBox->blockSignals(false);
-    ui->pressureLowThresholdSpinBox->blockSignals(false);
-    ui->pressureHighThresholdSpinBox->blockSignals(false);
-    ui->gasThresholdSpinBox->blockSignals(false);
+    setSpinBoxValue(ui->tempThresholdSpinBox, thresholds.highTemperature);
+    setSpinBoxValue(ui->humidityThresholdSpinBox, thresholds.highHumidity);
+    setSpinBoxValue(ui->pressureLowThresholdSpinBox, thresholds.lowPressure);
+    setSpinBoxValue(ui->pressureHighThresholdSpinBox, thresholds.highPressure);
+    setSpinBoxValue(ui->gasThresholdSpinBox, thresholds.highGas);
 }
