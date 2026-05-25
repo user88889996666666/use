@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>920</width>
+    <height>640</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GEC6818 环境监测报警系统</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="titleLabel">
+      <property name="text">
+       <string>GEC6818 环境监测报警系统</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size: 28px; font-weight: bold; color: #1f2d3d;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="mainLayout">
+      <item>
+       <widget class="QGroupBox" name="sensorGroupBox">
+        <property name="title">
+         <string>环境参数</string>
+        </property>
+        <layout class="QFormLayout" name="sensorFormLayout">
+         <item row="0" column="0"><widget class="QLabel" name="temperatureLabel"><property name="text"><string>温度</string></property></widget></item>
+         <item row="0" column="1"><widget class="QLabel" name="temperatureValueLabel"><property name="text"><string>--</string></property></widget></item>
+         <item row="1" column="0"><widget class="QLabel" name="humidityLabel"><property name="text"><string>湿度</string></property></widget></item>
+         <item row="1" column="1"><widget class="QLabel" name="humidityValueLabel"><property name="text"><string>--</string></property></widget></item>
+         <item row="2" column="0"><widget class="QLabel" name="lightLabel"><property name="text"><string>光照</string></property></widget></item>
+         <item row="2" column="1"><widget class="QLabel" name="lightValueLabel"><property name="text"><string>--</string></property></widget></item>
+         <item row="3" column="0"><widget class="QLabel" name="pressureLabel"><property name="text"><string>气压</string></property></widget></item>
+         <item row="3" column="1"><widget class="QLabel" name="pressureValueLabel"><property name="text"><string>--</string></property></widget></item>
+         <item row="4" column="0"><widget class="QLabel" name="altitudeLabel"><property name="text"><string>海拔</string></property></widget></item>
+         <item row="4" column="1"><widget class="QLabel" name="altitudeValueLabel"><property name="text"><string>--</string></property></widget></item>
+         <item row="5" column="0"><widget class="QLabel" name="gasLabel"><property name="text"><string>可燃气</string></property></widget></item>
+         <item row="5" column="1"><widget class="QLabel" name="gasValueLabel"><property name="text"><string>--</string></property></widget></item>
+         <item row="6" column="0"><widget class="QLabel" name="comfortLabel"><property name="text"><string>舒适度指数</string></property></widget></item>
+         <item row="6" column="1"><widget class="QLabel" name="comfortValueLabel"><property name="text"><string>--</string></property></widget></item>
+         <item row="7" column="0"><widget class="QLabel" name="timestampLabel"><property name="text"><string>更新时间</string></property></widget></item>
+         <item row="7" column="1"><widget class="QLabel" name="timestampValueLabel"><property name="text"><string>--</string></property></widget></item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="controlGroupBox">
+        <property name="title">
+         <string>控制与报警</string>
+        </property>
+        <layout class="QFormLayout" name="controlFormLayout">
+         <item row="0" column="0"><widget class="QLabel" name="controlModeLabel"><property name="text"><string>控制模式</string></property></widget></item>
+         <item row="0" column="1"><widget class="QLabel" name="controlModeValueLabel"><property name="text"><string>自动</string></property></widget></item>
+         <item row="1" column="0"><widget class="QCheckBox" name="autoModeCheckBox"><property name="text"><string>启用自动光照控制</string></property><property name="checked"><bool>true</bool></property></widget></item>
+         <item row="1" column="1"><spacer name="horizontalSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+         <item row="2" column="0"><widget class="QLabel" name="brightnessLabel"><property name="text"><string>手动亮度</string></property></widget></item>
+         <item row="2" column="1"><widget class="QSlider" name="brightnessSlider"><property name="minimum"><number>0</number></property><property name="maximum"><number>100</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+         <item row="3" column="0"><widget class="QLabel" name="ledBrightnessLabel"><property name="text"><string>LED当前亮度</string></property></widget></item>
+         <item row="3" column="1"><widget class="QLabel" name="ledBrightnessValueLabel"><property name="text"><string>0</string></property></widget></item>
+         <item row="4" column="0"><widget class="QLabel" name="buzzerLabel"><property name="text"><string>蜂鸣器</string></property></widget></item>
+         <item row="4" column="1"><widget class="QLabel" name="buzzerValueLabel"><property name="text"><string>关</string></property></widget></item>
+         <item row="5" column="0"><widget class="QLabel" name="alarmStateTitleLabel"><property name="text"><string>报警状态</string></property></widget></item>
+         <item row="5" column="1"><widget class="QLabel" name="alarmStateLabel"><property name="text"><string>正常</string></property></widget></item>
+         <item row="6" column="0"><widget class="QLabel" name="alarmMessageTitleLabel"><property name="text"><string>报警信息</string></property></widget></item>
+         <item row="6" column="1"><widget class="QLabel" name="alarmMessageLabel"><property name="text"><string>无</string></property></widget></item>
+         <item row="7" column="0"><widget class="QLabel" name="logPathLabel"><property name="text"><string>数据存储路径</string></property></widget></item>
+         <item row="7" column="1"><widget class="QLabel" name="logPathValueLabel"><property name="text"><string>--</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>920</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

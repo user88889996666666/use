@@ -1,0 +1,32 @@
+QMainWindow {
+    background-color: #f4f8fb;
+}
+QGroupBox {
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #9ab8d6;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding-top: 8px;
+    background-color: #ffffff;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 4px;
+    color: #1b4d7a;
+}
+QLabel {
+    font-size: 14px;
+}
+QSlider::groove:horizontal {
+    height: 6px;
+    border-radius: 3px;
+    background: #d3dce6;
+}
+QSlider::handle:horizontal {
+    width: 18px;
+    margin: -6px 0;
+    border-radius: 9px;
+    background: #1f8dd6;
+}
