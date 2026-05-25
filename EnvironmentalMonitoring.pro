@@ -1,4 +1,4 @@
-QT       += core gui widgets
+QT       += core gui widgets serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,14 +13,16 @@ SOURCES += \
     sensormanager.cpp \
     alarmsystem.cpp \
     datalogger.cpp \
-    hardwareinterface.cpp
+    hardwareinterface.cpp \
+    gy39sensor.cpp
 
 HEADERS += \
     mainwindow.h \
     sensormanager.h \
     alarmsystem.h \
     datalogger.h \
-    hardwareinterface.h
+    hardwareinterface.h \
+    gy39sensor.h
 
 FORMS += \
     mainwindow.ui

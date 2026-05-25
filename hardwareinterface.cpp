@@ -1,43 +1,93 @@
 #include "hardwareinterface.h"
+#include "gy39sensor.h"
 
 #include <QDateTime>
 #include <QtGlobal>
 
 HardwareInterface::HardwareInterface(QObject *parent)
     : QObject(parent)
+    , m_gy39Sensor(new GY39Sensor(this))
     , m_seed(static_cast<quint32>(QDateTime::currentMSecsSinceEpoch() & 0x7fffffff))
     , m_ledBrightness(0)
     , m_buzzerEnabled(false)
 {
+    connect(m_gy39Sensor, &GY39Sensor::connectionStatusChanged, this, [this](bool connected) {
+        if (connected) {
+            emit gy39Connected();
+        } else {
+            emit gy39Disconnected();
+        }
+    });
+}
+
+HardwareInterface::~HardwareInterface()
+{
+}
+
+bool HardwareInterface::initializeGY39(const QString &portName, int baudRate)
+{
+    return m_gy39Sensor->openPort(portName, baudRate);
+}
+
+bool HardwareInterface::isGY39Connected() const
+{
+    return m_gy39Sensor->isConnected();
 }
 
 double HardwareInterface::readTemperature() const
 {
+    if (m_gy39Sensor->isConnected()) {
+        GY39Data data = m_gy39Sensor->getCurrentData();
+        if (data.isValid) {
+            return data.temperature;
+        }
+    }
     return nextValue(16.0, 40.0);
 }
 
 double HardwareInterface::readHumidity() const
 {
+    if (m_gy39Sensor->isConnected()) {
+        GY39Data data = m_gy39Sensor->getCurrentData();
+        if (data.isValid) {
+            return data.humidity;
+        }
+    }
     return nextValue(25.0, 95.0);
 }
 
 double HardwareInterface::readLight() const
 {
+    if (m_gy39Sensor->isConnected()) {
+        GY39Data data = m_gy39Sensor->getCurrentData();
+        if (data.isValid) {
+            return data.light;
+        }
+    }
     return nextValue(0.0, 1000.0);
 }
 
 double HardwareInterface::readPressure() const
 {
+    if (m_gy39Sensor->isConnected()) {
+        GY39Data data = m_gy39Sensor->getCurrentData();
+        if (data.isValid) {
+            return data.pressure;
+        }
+    }
     return nextValue(940.0, 1080.0);
 }
 
 double HardwareInterface::readAltitude() const
 {
+    // GY-39 传感器不提供海拔高度，使用气压计算
+    // 简化计算：仅使用模拟数据
     return nextValue(10.0, 260.0);
 }
 
 double HardwareInterface::readGasConcentration() const
 {
+    // GY-39 传感器不包含可燃气浓度检测，使用模拟数据
     return nextValue(80.0, 450.0);
 }
 
