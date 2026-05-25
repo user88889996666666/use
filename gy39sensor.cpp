@@ -86,7 +86,7 @@ void GY39Sensor::configureOutput(bool autoOutput, bool enableBME, bool enableLig
     }
 
     // 命令格式: 0xA5 + 指令 + 校验和
-    // 示例: 0xA5 0x87 0x2C (0x87表示启用AUTO/BME/MAX，校验和=(0xA5+0x87)&0xFF=0x2C)
+    // 示例: 0xA5 0x87 0x2C (0x87启用AUTO/BME/MAX，校验和=(0xA5+0x87)&0xFF=0x2C)
     quint8 command = 0x80 | config;
     sendCommand(command);
 }
@@ -265,8 +265,8 @@ bool GY39Sensor::parseMultiSensorFrame(const QByteArray &frame)
     }
 
     // 解析温度（Byte4-5）
-    // T = (Byte4<<8) | Byte5, 实际值 = T / 100
-    // 使用unsigned中间值以正确处理两补数表示
+    // T = (Byte4<<8) | Byte5, actual value = T / 100
+    // Use unsigned intermediate to properly handle two's complement representation
     quint16 tempRawUnsigned = (static_cast<unsigned char>(frame[4]) << 8) |
                               static_cast<unsigned char>(frame[5]);
     qint16 tempRaw = static_cast<qint16>(tempRawUnsigned);
@@ -287,8 +287,8 @@ bool GY39Sensor::parseMultiSensorFrame(const QByteArray &frame)
     m_currentData.humidity = static_cast<double>(humRaw) / 100.0;
 
     // 解析海拔（Byte12-13）
-    // H = (Byte12<<8) | Byte13，单位为米，无需缩放
-    // 使用unsigned中间值以正确处理两补数表示（支持海平面下高度）
+    // H = (Byte12<<8) | Byte13, unit = meters (no scaling)
+    // Use unsigned intermediate to properly handle two's complement representation (supports below sea level)
     quint16 altitudeRawUnsigned = (static_cast<unsigned char>(frame[12]) << 8) |
                                   static_cast<unsigned char>(frame[13]);
     qint16 altitudeRaw = static_cast<qint16>(altitudeRawUnsigned);
