@@ -83,7 +83,7 @@ bool connected = hw.initializeGY39("/dev/ttyUSB0", 9600);
 if (hw.isGY39Connected()) {
     double temp = hw.readTemperature();      // °C
     double humidity = hw.readHumidity();     // %RH
-    double pressure = hw.readPressure();     // Pa
+    double pressure = hw.readPressure();     // hPa
     double light = hw.readLight();           // lux
     double altitude = hw.readAltitude();     // m
 }

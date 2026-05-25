@@ -2,6 +2,7 @@
 #include "hardwareinterface.h"
 
 namespace {
+// 保证气压上下限阈值至少保留最小间隔，避免上限<=下限的无效配置。
 constexpr double kPressureGap = 1.0;
 }
 

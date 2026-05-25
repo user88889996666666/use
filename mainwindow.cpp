@@ -11,6 +11,7 @@
 #include <QtGlobal>
 
 namespace {
+// 与UI中亮度滑条最大值保持一致（0-100）。
 constexpr int kMaxBrightness = 100;
 constexpr double kAutoBrightnessLightScale = 10.0;
 constexpr double kComfortIdealTemperature = 24.0;
