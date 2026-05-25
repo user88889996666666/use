@@ -148,8 +148,8 @@ void GY39Sensor::onSerialDataReady()
             frameLength = 9;
         } else if (dataType == 0x45) {
             // 温度/气压/湿度/海拔数据
-            // 0x5A 0x5A 0x45 0x0A + 10字节数据 + 校验和 = 14字节
-            frameLength = 14;
+            // 0x5A 0x5A 0x45 0x0A + 10字节数据 + 校验和 = 15字节
+            frameLength = 15;
         } else if (dataType == 0x55) {
             // IIC地址数据：0x5A 0x5A 0x55 0x01 + 1字节数据 + 校验和 = 6字节
             frameLength = 6;
@@ -243,7 +243,7 @@ bool GY39Sensor::parseLightFrame(const QByteArray &frame)
 
 bool GY39Sensor::parseMultiSensorFrame(const QByteArray &frame)
 {
-    if (frame.length() != 14) {
+    if (frame.length() != 15) {
         return false;
     }
 
@@ -254,12 +254,12 @@ bool GY39Sensor::parseMultiSensorFrame(const QByteArray &frame)
 
     // 计算校验和
     unsigned char checksum = 0;
-    for (int i = 0; i < 13; ++i) {
+    for (int i = 0; i < 14; ++i) {
         checksum += static_cast<unsigned char>(frame[i]);
     }
     checksum = checksum & 0xFF;
 
-    if (checksum != static_cast<unsigned char>(frame[13])) {
+    if (checksum != static_cast<unsigned char>(frame[14])) {
         emit errorOccurred("Multi-sensor frame checksum error");
         return false;
     }
